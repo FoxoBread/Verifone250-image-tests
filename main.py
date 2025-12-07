@@ -1,4 +1,4 @@
-import serial; from PIL import Image
+import serial, sys; from PIL import Image
 Serial = serial.Serial(
     port='/dev/ttyUSB0',			# Serial port.
     baudrate=9600,				# Baudrate.
@@ -18,15 +18,14 @@ def main(): #{
 	Serial.write(b'\x1E');			#Enter double-width mode.	0x1E
 	Serial.write(b'\x1B\x67');		#Enter dot graphics mode.	0x1B, 0x67
 
-	IMAGE	= Image.open('foo.bmp');
-	WIDTH	= IMAGE.width;
-	HEIGHT	= IMAGE.height;
+	IMAGE	= Image.open(sys.argv[1]).convert('1');
+	if IMAGE.width > 420: IMAGE.resize((420, max(1, int(IMAGE.height * 420 / IMAGE.width)))) 
 	PIXELS	= list(IMAGE.getdata());
 
-	for Y in range(HEIGHT):
+	for Y in range(IMAGE.height): #{
 		LINES	= [0] * 420;
-		_START	= Y * WIDTH;
-		for X in range(WIDTH): #{
+		_START	= Y * IMAGE.width;
+		for X in range(IMAGE.width): #{
 			_VALUE = PIXELS[_START+X]
 			if _VALUE == 0: LINES[X] = 1;
 			else: LINES[X] = 0;
@@ -34,28 +33,28 @@ def main(): #{
 		VALUES_ODD	= LINES[0:420:2];
 		VALUES_EVEN	= LINES[1:420:2];
 
-		for i in range(0, len(VALUES_ODD), 6):
+		for i in range(0, len(VALUES_ODD), 6): #{
 			CHUNK = VALUES_ODD[i:i+6];
 			if len(CHUNK) < 6: CHUNK += [0] * (6 - len(CHUNK));
 			BYTE_VALUE = 0x40;
 			for _INDEX, _BIT in enumerate(CHUNK):
 				if _BIT: BYTE_VALUE |= (1 << (5 - _INDEX));
 			Serial.write(bytes([BYTE_VALUE]));
-		
+		#}
 		Serial.write(bytes([0x20|0x04]));
 
-		for i in range(0, len(VALUES_EVEN), 6):
+		for i in range(0, len(VALUES_EVEN), 6):#{
 			CHUNK = VALUES_EVEN[i:i+6];
 			if len(CHUNK) < 6: CHUNK += [0] * (6 - len(CHUNK));
 			BYTE_VALUE = 0x40;
 			for _INDEX, _BIT in enumerate(CHUNK):
 				if _BIT: BYTE_VALUE |= (1 << (5 - _INDEX));
 			Serial.write(bytes([BYTE_VALUE]));
-		
-		if Y == HEIGHT - 1:	Serial.write(bytes([0x20 | 0x01 | 0x08]));
-		else:			Serial.write(bytes([0x20 | 0x01]));
-
+		#}
+		if Y == IMAGE.height - 1:	Serial.write(bytes([0x20 | 0x01 | 0x08]));
+		else:				Serial.write(bytes([0x20 | 0x01]));
+	#}
 	Serial.close();
-
+#}
 if __name__ == '__main__':
 	main()
