@@ -19,7 +19,7 @@ def main(): #{
 	Serial.write(b'\x1B\x67');		#Enter dot graphics mode.	0x1B, 0x67
 
 	IMAGE	= Image.open(sys.argv[1]).convert('1');
-	IMAGE.resize([420, 210]);
+	IMAGE	= IMAGE.resize([420, 210]);
 	PIXELS	= list(IMAGE.getdata());
 
 	for Y in range(IMAGE.height): #{
