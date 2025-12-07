@@ -1,4 +1,16 @@
-from lib import fakeSerial as Serial; from PIL import Image
+import serial; from PIL import Image
+Serial = serial.Serial(
+    port='/dev/ttyUSB0',			# Serial port.
+    baudrate=9600,				# Baudrate.
+    bytesize=serial.SEVENBITS,			# Data bits.
+    parity=serial.PARITY_EVEN,			# Parity checking.
+    stopbits=serial.STOPBITS_ONE,		# Stop bits.
+    timeout=2,					# Read timeout (seconds).
+    write_timeout=2,				# Write timeout.
+    xonxoff=False,				# Software flow control.
+    rtscts=True,				# Hardware flow control.
+    dsrdtr=False				# DTR/DSR flow control.
+)
 
 def main(): #{
 	Serial.write(b'\x1B\x63');		#Reset printer.			0x1B, 0x63
