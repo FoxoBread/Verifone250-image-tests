@@ -16,11 +16,10 @@ def main(): #{
 	Serial.write(b'\x1B\x63');		#Reset printer.			0x1B, 0x63
 	Serial.write(b'\x1C');			#Enter native mode.		0x1C
 	Serial.write(b'\x1E');			#Enter double-width mode.	0x1E
-	Serial.write(b'\x1B\x61\x30\x07\x3B')	#TEST: Set 7 dot line height.	0x1B, 0x61, 0x30, 0x07, 0x3B
 	Serial.write(b'\x1B\x67');		#Enter dot graphics mode.	0x1B, 0x67
 
 	IMAGE	= Image.open(sys.argv[1]).convert('1');
-	IMAGE	= IMAGE.resize([420, 420]);
+	IMAGE	= IMAGE.resize([420, 200]);
 	PIXELS	= list(IMAGE.getdata());
 
 	for Y in range(IMAGE.height): #{
