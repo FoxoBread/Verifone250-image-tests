@@ -25,10 +25,10 @@ def loop(DATA): #{
 #}
 
 def main(): #{
-	print(b'\x1B\x63');										#Reset printer.			0x1B, 0x63
-	print(b'\x1C');											#Enter native mode.		0x1C
-	print(b'\x1E');											#Enter double-width mode.	0x1E
-	print(b'\x1B\x67');										#Enter dot graphics mode.	0x1B, 0x67
+	Serial.write(b'\x1B\x63');										#Reset printer.			0x1B, 0x63
+	Serial.write(b'\x1C');											#Enter native mode.		0x1C
+	Serial.write(b'\x1E');											#Enter double-width mode.	0x1E
+	Serial.write(b'\x1B\x67');										#Enter dot graphics mode.	0x1B, 0x67
 
 	IMAGE	= Image.open(sys.argv[1]).convert('1').resize([420, 420]);				#Load image as 1 bit 420x420 graphic.
 
