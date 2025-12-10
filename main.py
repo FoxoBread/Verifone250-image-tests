@@ -16,11 +16,11 @@ def loop(DATA): #{
 	for i in range(0, len(DATA), 6): #{								#Loop through all even/odd bits of bit array (35 times).
 		CHUNK = DATA[i:i+6];									#Get 6 bits of bit array.
 		if len(CHUNK) < 6: CHUNK += [0] * (6 - len(CHUNK));					#If we're out of bits, pad with 0.
-		BYTE_VALUE = 0x40;									#TODO: Why 0x40?
-		for i, BIT in enumerate(CHUNK): #{							#Loop through the 6 bits in chunk.
-			if BIT: BYTE_VALUE |= (1 << (5 - i));						#If bit is 1, Inclusive or 0x40 with 1 bit shifted to left 5-loop iteration. TODO: Why???
+		BIT_VALUE = 0x40;									#Start with 1000000.
+		for i, v in enumerate(CHUNK): #{							#Loop through the 6 bits in chunk.
+			if v: BIT_VALUE |= (1 << (5 - i));						#If bit is 1, change BIT_VALUE to 1XXXXX where X is whichever bits is to be set.
 		#}											#End chunk loop.
-		Serial.write([BYTE_VALUE]);								#Write either 0x40 or whatever the cursed hell the above operation returned. TODO: WHY?!
+		Serial.write([BIT_VALUE]);								#Write either 1000000 if bit was 0 or 1XXXXX where X is bits of the image chunk.
 	#}
 #}
 
@@ -40,13 +40,12 @@ def main(): #{
 			else: LINES[X] = 0;								#If pixel is white, set bit in array to 0 (white).
 		#}											#End horizontal loop.
 
-		print(bytes([0x20|0x04]));								#Write 36 "\x00"'s to serial port. TODO: Why?
-
 		loop(LINES[0:420:2]);									#Jump to loop routine with odd bits from bit array.
+		Serial.write(bytes([0x20|0x04]));							#Write terminator for odd bits to serial. Per documentation.
+		
 		loop(LINES[1:420:2]);									#Jump to loop routine with even bits from bit array.
-
-		if Y == IMAGE.height - 1:	Serial.write(bytes([0x20 | 0x01 | 0x08]));		#If vertical loop index equal to image Y - 1: write 0x29 to serial. TODO: Why?
-		else:				Serial.write(bytes([0x20 | 0x01]));			#If not: write 0x21 to serial. TODO: Why?
+		if Y == IMAGE.height - 1:	Serial.write(bytes([0x20 | 0x01 | 0x08]));		#If at end of image, write terminator exitting graphics mode.
+		else:				Serial.write(bytes([0x20 | 0x01]));			#If not, write standard terminator to serial port. Per documentation.
 	#}												#End vertical loop.
 	
 	Serial.close();											#Close serial port.
