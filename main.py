@@ -20,7 +20,7 @@ def loop(DATA): #{
 		for i, v in enumerate(CHUNK): #{							#Loop through the 6 bits in chunk.
 			if v: BIT_VALUE |= (1 << (5 - i));						#If bit is 1, change BIT_VALUE to 1XXXXX where X is whichever bits is to be set.
 		#}											#End chunk loop.
-		Serial.write([BIT_VALUE]);								#Write either 1000000 if bit was 0 or 1XXXXX where X is bits of the image chunk.
+		Serial.write(bytes([BIT_VALUE]));							#Write either 1000000 if bit was 0 or 1XXXXX where X is bits of the image chunk.
 	#}
 #}
 
