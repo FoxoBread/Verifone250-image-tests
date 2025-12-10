@@ -41,11 +41,11 @@ def main(): #{
 		#}											#End horizontal loop.
 
 		loop(LINES[0:420:2]);									#Jump to loop routine with odd bits from bit array.
-		Serial.write(bytes([0x20|0x04]));							#Write terminator for odd bits to serial. Per documentation.
+		Serial.write(bytes('\x24'));								#Write terminator for odd bits to serial. Per documentation.
 		
 		loop(LINES[1:420:2]);									#Jump to loop routine with even bits from bit array.
-		if Y == IMAGE.height - 1:	Serial.write(bytes([0x04 | 0x01 | 0x08]));		#If at end of image, write terminator exitting graphics mode.
-		else:				Serial.write(bytes([0x04 | 0x01]));			#If not, write standard terminator to serial port. Per documentation.
+		if Y == IMAGE.height - 1:	Serial.write(bytes('\x29'));				#If at end of image, write terminator exitting graphics mode.
+		else:				Serial.write(bytes('\x21'));				#If not, write standard terminator to serial port. Per documentation.
 	#}												#End vertical loop.
 	
 	Serial.close();											#Close serial port.
