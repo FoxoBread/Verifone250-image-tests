@@ -24,7 +24,7 @@ Values are sent in hexidecimal, directly corresponding to their base-2 bits.
 |	Switch		|	setting	|
 |	-		|	-	|
 |	Baudrate	|	`9600`	|
-|	Byte length	|	`7`	|
+|	Byte length	|	`7-bit`	|
 |	Parity		|	`even`	|
 
 ### DIP switch information  
